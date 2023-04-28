@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:expense_tracker_app/models/expense.dart';
 import 'package:intl/intl.dart';
@@ -32,6 +35,44 @@ class _NewExpenseState extends State<NewExpense> {
     });
   }
 
+  void _showDialog() {
+    if (Platform.isIOS) {
+      // ios dialog
+      showCupertinoDialog(
+        context: context,
+        builder: (ctx) => CupertinoAlertDialog(
+          title: const Text("Invalid Input!"),
+          content: const Text("Enter Valid Title, Amount & Category"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(ctx);
+              },
+              child: const Text("Ok"),
+            ),
+          ],
+        ),
+      );
+    } else {
+      // android dialog
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text("Invalid Input!"),
+          content: const Text("Enter Valid Title, Amount & Category"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(ctx);
+              },
+              child: const Text("Ok"),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
 // input validation
   void _submitExpenseData() {
     final enteredAmount = double.tryParse(_amountController.text);
@@ -41,20 +82,7 @@ class _NewExpenseState extends State<NewExpense> {
         amountIsInvalid ||
         _selectedDate == null) {
       // show error message
-      showDialog(
-        context: context,
-        builder: (ctx) => AlertDialog(
-          title: const Text("Invalid Input!"),
-          content: const Text("Enter Valid Title, Amount & Category"),
-          actions: [
-            TextButton(
-                onPressed: () {
-                  Navigator.pop(ctx);
-                },
-                child: const Text("Ok"))
-          ],
-        ),
-      );
+      _showDialog();
       return;
     }
 
